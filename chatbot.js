@@ -35,7 +35,6 @@ const chatbotJsPkg = {
             const cssLink = document.createElement("link");
             cssLink.id = "wavedream-chatbot-style";
             cssLink.rel = "stylesheet";
-            cssLink.href = "https://cdn.jsdelivr.net/gh/nanumdream-developer/chatbot-source@main/chatbot.css";
             document.head.appendChild(cssLink);
 
         }
