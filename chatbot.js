@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const chatbotJsPkg = {
     config: {
-        cdnImgPath: "https://cdn.jsdelivr.net/gh/nanumdream-developer/chatbot-source@main/chatbot/image",
+        cdnImgPath: "https://cdn.jsdelivr.net/gh/nanumdream-developer/chatbot-source@main/image",
         serverUrl: "https://nanumdream.com"
     },
     state: {
@@ -35,7 +35,7 @@ const chatbotJsPkg = {
             const cssLink = document.createElement("link");
             cssLink.id = "wavedream-chatbot-style";
             cssLink.rel = "stylesheet";
-            cssLink.href = "https://cdn.jsdelivr.net/gh/nanumdream-developer/chatbot-source@main/chatbot/chatbot.css";
+            cssLink.href = "https://cdn.jsdelivr.net/gh/nanumdream-developer/chatbot-source@main/chatbot.css";
             document.head.appendChild(cssLink);
 
         }
