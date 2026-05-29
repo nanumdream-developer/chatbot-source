@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const chatbotJsPkg = {
     config: {
         cdnImgPath: "https://cdn.jsdelivr.net/gh/nanumdream-developer/chatbot-source@main/image",
-        serverUrl: "https://nanumdream.com"
+        serverUrl: "https://nanumdream.com/chatbot"
     },
     state: {
         requestTimes: []
