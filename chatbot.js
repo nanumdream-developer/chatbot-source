@@ -29,7 +29,6 @@ const chatbotJsPkg = {
         }
     },
     injectWidgetHTML: function(){
-
         //css
         if(!document.getElementById("wavedream-chatbot-style")){
             const cssLink = document.createElement("link");
@@ -231,10 +230,12 @@ const chatbotJsPkg = {
             .replace(/\n/g, '<br>');
     },
     scrollToBottom: function(){
-        const chatCont = document.querySelector(".chat-cont");
-        if(chatCont){
-            chatCont.scrollTop = chatCont.scrollHeight;
-        }
+        setTimeout(() => {
+            const chatCont = document.querySelector(".chat-cont");
+            if(chatCont){
+                chatCont.scrollTop = chatCont.scrollHeight;
+            }
+        }, 50);
     },
     typeWrite: function(element, htmlContent){
         let currentText = "";
