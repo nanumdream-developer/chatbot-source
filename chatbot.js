@@ -19,7 +19,7 @@ const chatbotJsPkg = {
         this.optionFontsize();
 
         const chatbotEl = document.getElementById("chatbot");
-        if(window.innerWidth > 678 && localStorage.getItem("chat_open") === "1"){
+        if(window.innerWidth > 678 && sessionStorage.getItem("chat_open") === "1"){
             chatbotEl.classList.add("open");
         }
         
@@ -108,11 +108,11 @@ const chatbotJsPkg = {
                 
                 if (isOpen) {
                     chatbot.classList.remove("open");
-                    localStorage.setItem("chat_open", "0");
+                    sessionStorage.setItem("chat_open", "0");
                     if (window.innerWidth <= 768) document.body.classList.remove("hold");
                 } else {
                     chatbot.classList.add("open");
-                    localStorage.setItem("chat_open", "1");
+                    sessionStorage.setItem("chat_open", "1");
                     this.scrollToBottom();
                     if (window.innerWidth <= 768) document.body.classList.add("hold");
                 }
