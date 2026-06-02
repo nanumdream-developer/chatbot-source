@@ -50,10 +50,6 @@ if (!empty($global_prompt) && !empty($site_manual)) {
 }
 
 
-if(!empty($history) && $history[0]['role'] === 'user'){
-  $originalText = $history[0]['parts'][0]['text'];
-  $history[0]['parts'][0]['text'] = $systemInstruction . "\n\n[사용자 질문]\n" . $originalText;
-}
 $data = [
   "system_instruction" => [
     "parts" => [

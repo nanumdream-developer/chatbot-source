@@ -181,7 +181,10 @@ const chatbotJsPkg = {
                 chatHistory.pop();
                 sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
                 
-                const errMsg = data.error.code === 429 ? "죄송합니다. 현재 답변을 처리할 수 없습니다. 잠시 후 다시 질문해 주시거나 고객센터로 문의해 주세요." : `오류가 발생했습니다: ${data.error.message}`;
+                let errMsg = "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+                if(data.error.code == 429 || data.error.code == 503 || data.error.message.includes("high demand")){
+                    errMsg = "현재 이용량이 많아 답변이 지연되고 있습니다. 잠시 후 다시 시도해 주시거나 고객센터로 문의해 주세요."
+                }
                 chatCont.insertAdjacentHTML('beforeend', `<div class="chat-cont__msg ai-msg">${errMsg}</div>`);
                 this.scrollToBottom();
                 return;
