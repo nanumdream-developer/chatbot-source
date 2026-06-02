@@ -35,11 +35,11 @@ function fetchGithubFile($url){
 
 
 // 글로벌 프롬프트
-$global_url = "https://raw.githubusercontent.com/nanumdream-developer/site-manual/main/global.txt";
+$global_url = "https://raw.githubusercontent.com/nanumdream-developer/site-manual/main/global.txt?t=" . time();
 $global_prompt = fetchGithubFile($global_url);
 
 // 매뉴얼 프롬프트
-$site_url = "https://raw.githubusercontent.com/nanumdream-developer/site-manual/main/" . $site_id . ".txt";
+$site_url = "https://raw.githubusercontent.com/nanumdream-developer/site-manual/main/" . $site_id . ".txt?t=" . time();
 $site_manual = fetchGithubFile($site_url);
 
 
