@@ -87,10 +87,10 @@ const chatbotJsPkg = {
 
         if(chatHistory.length > 0) {
             chatHistory.forEach(msg => {
-                const text = msg.parts[0].text;
+                const text = msg.content;
                 if(msg.role === "user") {
                     chatCont.insertAdjacentHTML('beforeend', `<div class="chat-cont__msg user-msg">${text}</div>`);
-                } else if (msg.role === "model") {
+                } else if (msg.role === "assistant") { 
                     const parsedText = this.parseMarkdown(text);
                     chatCont.insertAdjacentHTML('beforeend', `<div class="chat-cont__msg ai-msg">${parsedText}</div>`);
                 }
@@ -157,7 +157,7 @@ const chatbotJsPkg = {
         let chatHistory = JSON.parse(sessionStorage.getItem('chatHistory')) || [];
         chatHistory.push({
             "role" : "user",
-            "parts":[{"text": messageText}]
+            "content": messageText
         });
 
         const currentSiteId = (window.WavedreamChatConfig && window.WavedreamChatConfig.siteId) ? window.WavedreamChatConfig.siteId : 'wavedreamkr';
@@ -177,7 +177,7 @@ const chatbotJsPkg = {
             document.getElementById("loading-msg").remove();
 
             if (data.error) {
-                console.error(`%c[Gemini API 에러] 코드: ${data.error.code} | 상태: ${data.error.status}\n메시지: ${data.error.message}`, "color: #ff4d4d; font-weight: bold;");
+                console.error(`%c[에러] 코드: ${data.error.code} | 상태: ${data.error.status}\n메시지: ${data.error.message}`, "color: #ff4d4d; font-weight: bold;");
                 chatHistory.pop();
                 sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
                 
@@ -190,13 +190,13 @@ const chatbotJsPkg = {
                 return;
             }
 
-            if(data.candidates && data.candidates[0].content.parts[0].text){
-                let aiReply = data.candidates[0].content.parts[0].text;
+            if(data.reply){
+                let aiReply = data.reply;
 
                 chatHistory.push({
-                    "role":"model",
-                    "parts": [{"text": aiReply}]
-                });
+                    "role": "assistant",
+                    "content": aiReply
+                })
                 sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
 
                 aiReply = this.parseMarkdown(aiReply);
