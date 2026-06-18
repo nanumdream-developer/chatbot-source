@@ -15,6 +15,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $input = json_decode(file_get_contents('php://input'), true);
 $history = $input['history'] ?? [];
 $site_id = $input['site_id'] ?? 'wavedreamkr';
+$user_id = $input['user_id'] ?? 'guest';
+
+// 질문 추출
+$user_question = '';
+if(!empty($history)){
+  $last_msg = end($history);
+  if(isset($last_msg['role']) && $last_msg['role'] === 'user'){
+    $user_question = $last_msg['content'];
+  }
+}
 
 
 
@@ -66,7 +76,7 @@ if(!empty($history)){
 }
 
 $data = [
-  "model" => "qwen2.5:3b",
+  "model" => "qwen2.5:7b",
   "messages" => $ollama_messages,
   "stream" => false,
   "options" => [
@@ -89,10 +99,49 @@ curl_close($ch);
 $responseData = json_decode($response, true);
 if($http_code == 200 && isset($responseData['message']['content'])){
   $ai_reply = $responseData['message']['content'];
-
   $ai_reply = trim($ai_reply);
 
-  echo json_encode(["reply" => $ai_reply]);
+  // 통계 로그 저장
+  $db_debug_msg = "이상없음";
+  try {
+    if(!defined('_WAVEDREAM_')){
+      define('_WAVEDREAM_', true);
+    }
+
+    $db_file = __DIR__ . '/../db_config.php';
+
+    if(!file_exists($db_file)){
+      throw new Exception("db_config 파일을 찾을 수 없습니다. 경로: " . $db_file);
+    }
+
+    include_once($db_file);
+
+    if(!isset($conn) || !$conn){
+      throw new Exception("DB 연결 객체(\$conn)가 정상적으로 생성되지 않았습니다.");
+    }
+
+    $safe_site_id = mysqli_real_escape_string($conn, $site_id);
+    $safe_user_id = mysqli_real_escape_string($conn, $user_id);
+    $safe_question = mysqli_real_escape_string($conn, $user_question);
+    $safe_reply = mysqli_real_escape_string($conn, $ai_reply);
+
+    $sql = "INSERT INTO chatbot_logs (site_code, user_id, question, ai_answer, reg_date)
+            VALUES ('{$safe_site_id}', '{$safe_user_id}', '{$safe_question}', '{$safe_reply}', NOW())";
+
+    if(!mysqli_query($conn, $sql)){
+      throw new Exception("DB 쿼리 실행 실패: " . mysqli_error($conn));
+    }
+
+    mysqli_close($conn);
+    $db_debug_msg = "DB 저장 성공";
+  } catch (Throwable $e){
+    $db_debug_msg = $e->getMessage();
+  }
+
+  echo json_encode([
+    "reply" => $ai_reply,
+    "db_debug" => $db_debug_msg
+  ]);
 } else {
     // 503 과부하 대신 통신 오류 시 반환
     echo json_encode(["error" => ["code" => $http_code, "message" => "Ollama Server Error"]]);

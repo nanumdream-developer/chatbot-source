@@ -161,6 +161,7 @@ const chatbotJsPkg = {
         });
 
         const currentSiteId = (window.WavedreamChatConfig && window.WavedreamChatConfig.siteId) ? window.WavedreamChatConfig.siteId : 'wavedreamkr';
+        const currentUserId = (window.WavedreamChatConfig && window.WavedreamChatConfig.userId) ? window.WavedreamChatConfig.userId : 'guest';
 
         fetch(`${this.config.serverUrl}/chat.php`, {
             method: 'POST',
@@ -169,7 +170,8 @@ const chatbotJsPkg = {
             },
             body: JSON.stringify({
                 history: chatHistory,
-                site_id: currentSiteId
+                site_id: currentSiteId,
+                user_id: currentUserId
             })
         })
         .then(response => response.json())
