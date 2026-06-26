@@ -28,6 +28,10 @@ const chatbotJsPkg = {
             document.querySelector(".chat-cont").style.fontSize = `${savedFontSize}px`;
         }
     },
+    getHistoryKey: function() {
+        const siteId = (window.WavedreamChatConfig && window.WavedreamChatConfig.siteId) ? window.WavedreamChatConfig.siteId : 'wavedreamkr';
+        return 'chatHistory_' + siteId;
+    },
     injectWidgetHTML: function(){
         //css
         if(!document.getElementById("wavedream-chatbot-style")){
@@ -82,7 +86,8 @@ const chatbotJsPkg = {
         document.body.insertAdjacentHTML('beforeend', widgetHTML);
     },
     loadHistory: function() {
-        const chatHistory = JSON.parse(sessionStorage.getItem('chatHistory')) || [];
+        const historyKey = this.getHistoryKey();
+        const chatHistory = JSON.parse(sessionStorage.getItem(historyKey)) || [];
         const chatCont = document.querySelector(".chat-cont");
 
         if(chatHistory.length > 0) {
@@ -154,7 +159,9 @@ const chatbotJsPkg = {
         `);
         this.scrollToBottom();
 
-        let chatHistory = JSON.parse(sessionStorage.getItem('chatHistory')) || [];
+        const historyKey = this.getHistoryKey();
+        let chatHistory = JSON.parse(sessionStorage.getItem(historyKey)) || [];
+        
         chatHistory.push({
             "role" : "user",
             "content": messageText
@@ -181,7 +188,7 @@ const chatbotJsPkg = {
             if (data.error) {
                 console.error(`%c[에러] 코드: ${data.error.code} | 상태: ${data.error.status}\n메시지: ${data.error.message}`, "color: #ff4d4d; font-weight: bold;");
                 chatHistory.pop();
-                sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+                sessionStorage.setItem(historyKey, JSON.stringify(chatHistory));
                 
                 let errMsg = "일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
                 if(data.error.code == 429 || data.error.code == 503 || data.error.message.includes("high demand")){
@@ -199,11 +206,10 @@ const chatbotJsPkg = {
                     "role": "assistant",
                     "content": aiReply
                 })
-                sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+                sessionStorage.setItem(historyKey, JSON.stringify(chatHistory));
 
                 aiReply = this.parseMarkdown(aiReply);
                 
-                // aiBubble 요소 생성 후 추가
                 const aiBubble = document.createElement('div');
                 aiBubble.className = 'chat-cont__msg ai-msg';
                 chatCont.appendChild(aiBubble);
@@ -212,7 +218,7 @@ const chatbotJsPkg = {
                 this.typeWrite(aiBubble, aiReply);
             } else {
                 chatHistory.pop();
-                sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+                sessionStorage.setItem(historyKey, JSON.stringify(chatHistory));
                 chatCont.insertAdjacentHTML('beforeend', `<div class="chat-cont__msg ai-msg">죄송합니다. 현재 답변을 처리할 수 없습니다. 잠시 후 다시 질문해 주시거나 고객센터로 문의해 주세요.</div>`);
             }
         })
@@ -220,7 +226,7 @@ const chatbotJsPkg = {
             const loadingMsg = document.getElementById("loading-msg");
             if(loadingMsg) loadingMsg.remove();
             chatHistory.pop();
-            sessionStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+            sessionStorage.setItem(historyKey, JSON.stringify(chatHistory));
             chatCont.insertAdjacentHTML('beforeend', `<div class="chat-cont__msg ai-msg">통신 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.</div>`);
             this.scrollToBottom();
         });
