@@ -159,6 +159,7 @@ const chatbotJsPkg = {
         `);
         this.scrollToBottom();
 
+        // 사이트별 고유 키
         const historyKey = this.getHistoryKey();
         let chatHistory = JSON.parse(sessionStorage.getItem(historyKey)) || [];
         
